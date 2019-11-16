@@ -4,7 +4,7 @@ A copy of [gravity-engine](https://github.com/kontheocharis/gravity-engine) made
 
 ### Installing & Usage
 
-Ensure that SFML is installed, as well as a recent `g++` version (tested with 9.20).
+Ensure that SFML and Eigen are installed, as well as a recent `g++` version (tested with 9.20).
 
 ```
 git clone https://github.com/kontheocharis/gravity-engine-cpp
