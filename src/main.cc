@@ -10,7 +10,6 @@
 
 namespace eig = Eigen;
 
-
 struct Particle
 {
     double mass;
@@ -188,7 +187,7 @@ int main(int argc, char *argv[])
     const int window_width = sf::VideoMode::getDesktopMode().width;
     const int window_height = sf::VideoMode::getDesktopMode().height;
 
-    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "My window");
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Gravity Engine++");
     window.setVerticalSyncEnabled(true);
 
     sf::Clock clock;
