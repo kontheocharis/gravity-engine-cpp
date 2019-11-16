@@ -16,4 +16,8 @@ make
 
 Then run with `./gravity-engine++`
 
-![Screenshot of the engine in action.](./img/screenshot.png "Screenshot of the engine in action.")
+### Todo
+
+- [ ] Split into separate files.
+- [ ] Add screenshots.
+- [ ] Fix some collision-related bugs.
