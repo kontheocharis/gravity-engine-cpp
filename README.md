@@ -7,7 +7,7 @@ A copy of [gravity-engine](https://github.com/kontheocharis/gravity-engine) made
 Ensure that SFML is installed, as well as a recent `g++` version (tested with 9.20).
 
 ```
-git clone https://github.com/kontheocharis/gravity-engine++
+git clone https://github.com/kontheocharis/gravity-engine-cpp
 cd ./gravity-engine++
 mkdir -p build && cd build
 cmake ..
