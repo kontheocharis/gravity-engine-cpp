@@ -8,7 +8,7 @@ Ensure that SFML and Eigen are installed, as well as a recent `g++` version (tes
 
 ```
 git clone https://github.com/kontheocharis/gravity-engine-cpp
-cd ./gravity-engine++
+cd ./gravity-engine-cpp
 mkdir -p build && cd build
 cmake ..
 make
