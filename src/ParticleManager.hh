@@ -1,12 +1,10 @@
 #pragma once
 
-#include <eigen3/Eigen/Dense>
 #include <memory>
 #include <SFML/Graphics.hpp>
 
+#include "Common.hh"
 #include "Particle.hh"
-
-namespace eig = Eigen;
 
 class ParticleManager
 {
@@ -19,8 +17,8 @@ class ParticleManager
     int window_width, window_height;
     double collision_dampening_coefficient;
 
-    void wrap_particle(Particle& particle) const;
-    void calculate_collisions(Particle& particle, int particle_index) const;
+    void wrap_particle(Particle& particle);
+    void calculate_collisions(Particle& particle, int particle_index);
 
 public:
     ParticleManager(

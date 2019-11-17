@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <eigen3/Eigen/Dense>
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -8,11 +7,10 @@
 #include <iostream>
 #include <random>
 
+#include "Common.hh"
 #include "Particle.hh"
 #include "ParticleManager.hh"
 #include "ParticleRenderer.hh"
-
-namespace eig = Eigen;
 
 int main(int argc, char *argv[])
 {

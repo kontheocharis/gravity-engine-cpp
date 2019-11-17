@@ -1,15 +1,14 @@
 #include "ParticleManager.hh"
 
-#include <eigen3/Eigen/Dense>
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "Common.hh"
 #include "Particle.hh"
 
-namespace eig = Eigen;
 
-void ParticleManager::wrap_particle(Particle& particle) const
+void ParticleManager::wrap_particle(Particle& particle)
 {
     eig::Vector2d unit_normal(0, 0);
     bool need_to_wrap = false;
@@ -46,6 +45,7 @@ void ParticleManager::wrap_particle(Particle& particle) const
     particle.velocity = particle.velocity - 2 * (particle.velocity.dot(unit_normal)) * unit_normal;
 }
 
+
 void ParticleManager::calculate_physics(const sf::Time& delta_time)
 {
     if (particles->size() <= 1) return;
@@ -69,7 +69,10 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
         {
             if (j == i) continue;
             auto& p = particles->at(j);
-            new_acceleration += (p.position - particle.position).normalized() * p.mass * big_g / (p.position - particle.position).squaredNorm();
+
+            new_acceleration +=
+                (p.position - particle.position).normalized() *
+                (p.mass * big_g) / (p.position - particle.position).squaredNorm();
         }
 
         particle.acceleration = new_acceleration;
@@ -79,27 +82,27 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
 
         if (wrapping) wrap_particle(particle);
     }
-
 }
 
-void ParticleManager::calculate_collisions(Particle& particle, int particle_index) const
+
+void ParticleManager::calculate_collisions(Particle& particle, int particle_index)
 {
     // Check collisions of all particles after the current one
     for (int j = particle_index + 1; j < particles->size(); ++j) 
     {
         auto& p = particles->at(j);
-
         const auto distance = (p.position - particle.position).norm();
-        if (distance - (particle.radius + p.radius + epsilon) > 0) continue;
+
+        if (distance > particle.radius + p.radius + epsilon) continue;
 
         const auto unit = (p.position - particle.position) / distance;
-
         const auto moment = 2 * (particle.velocity.dot(unit) - p.velocity.dot(unit)) / (particle.mass + p.mass);
 
         particle.velocity = particle.velocity - moment * p.mass * unit;
         p.velocity = p.velocity + moment * particle.mass * unit;
     }
 }
+
 
 void ParticleManager::create_circular_particle(int pos_x, int pos_y, double radius, double density)
 {
