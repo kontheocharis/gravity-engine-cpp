@@ -18,7 +18,7 @@ class ParticleManager
     double collision_dampening_coefficient;
 
     void wrap_particle(Particle& particle);
-    void calculate_collisions(Particle& particle, int particle_index);
+    void calculate_collisions(std::vector<Particle>::iterator);
 
 public:
     ParticleManager(
