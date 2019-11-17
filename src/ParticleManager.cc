@@ -59,7 +59,7 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
 
     for (int i = 0; i < particles->size(); ++i) 
     {
-        auto& particle = particles->operator[](i);
+        auto& particle = particles->at(i);
 
         particle.position += 
             particle.velocity * delta_time.asSeconds() +
@@ -73,7 +73,7 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
         for (int j = 0; j < particles->size(); ++j) 
         {
             if (i == j) continue;
-            auto& p = particles->operator[](j);
+            auto& p = particles->at(j);
             new_acceleration += (p.position - particle.position).normalized() * p.mass * big_g / (p.position - particle.position).squaredNorm();
         }
 
@@ -84,7 +84,7 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
         for (int j = 0; j < particles->size(); ++j) 
         {
             if (i == j) continue;
-            auto& p = particles->operator[](j);
+            auto& p = particles->at(j);
 
             if (!are_touching(particle, p)) continue;
             if (std::find(collision_checked.begin(), collision_checked.end(), std::pair<int,int>(std::minmax(i,j))) != collision_checked.end()) continue;
@@ -106,7 +106,7 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
 
 void ParticleManager::create_circular_particle(int pos_x, int pos_y, double radius, double density)
 {
-    const auto& sun = particles->operator[](0);
+    const auto& sun = particles->at(0);
     const eig::Vector2d position(pos_x, pos_y);
     const auto to_sun = (sun.position - position);
 
