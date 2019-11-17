@@ -10,6 +10,8 @@ namespace eig = Eigen;
 
 class ParticleManager
 {
+    const double epsilon = 1.0;
+
     std::shared_ptr<std::vector<Particle>> particles;
     double big_g;
     double time_multiplier;
@@ -18,7 +20,7 @@ class ParticleManager
     double collision_dampening_coefficient;
 
     void wrap_particle(Particle& particle) const;
-    bool are_touching(const Particle& p1, const Particle& p2) const;
+    void calculate_collisions(Particle& particle, int particle_index) const;
 
 public:
     ParticleManager(

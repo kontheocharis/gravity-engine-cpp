@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         Particle { 4/3 * M_PI * pow(sun_radius, 3) * sun_density, sun_radius, { window_width/2, window_height/2 }, { 0, 0 } }
     });
 
-    ParticleManager particle_manager(particles, big_g, false, window_width, window_height);
+    ParticleManager particle_manager(particles, big_g, true, window_width, window_height);
     ParticleRenderer particle_renderer(particles, sf::Color::White);
 
     std::random_device rd;
