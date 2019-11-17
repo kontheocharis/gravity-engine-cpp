@@ -1,3 +1,5 @@
+#pragma once
+
 #include <eigen3/Eigen/Dense>
 #include <memory>
 #include <SFML/Graphics.hpp>
