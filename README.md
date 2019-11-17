@@ -18,6 +18,6 @@ Then run with `./gravity-engine++`
 
 ### Todo
 
-- [ ] Split into separate files.
+- [x] Split into separate files.
 - [ ] Add screenshots.
 - [ ] Fix some collision-related bugs.
