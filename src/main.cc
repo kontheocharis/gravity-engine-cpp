@@ -17,7 +17,15 @@ int main(int argc, char *argv[])
     const int window_width = sf::VideoMode::getDesktopMode().width;
     const int window_height = sf::VideoMode::getDesktopMode().height;
 
-    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Gravity Engine++");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+
+    sf::RenderWindow window(
+            sf::VideoMode(window_width, window_height),
+            "Gravity Engine++",
+            sf::Style::Default,
+            settings);
+
     window.setVerticalSyncEnabled(true);
 
     sf::Clock clock;
@@ -25,13 +33,19 @@ int main(int argc, char *argv[])
     const double sun_radius = 75;
     const double sun_density = 10000;
     const double big_g = 2e-3;
+    
+    bool has_gravity = true;
 
-    auto particles = std::make_shared<std::vector<Particle>>(std::initializer_list<Particle>{
-        Particle { 4/3 * M_PI * pow(sun_radius, 3) * sun_density, sun_radius, { window_width/2, window_height/2 }, { 0, 0 } }
-    });
+    auto create_starting_particles = [&]() -> std::vector<Particle> {
+        return {
+            Particle { 4/3 * M_PI * pow(sun_radius, 3) * sun_density, sun_radius, { window_width/2, window_height/2 }, { 0, 0 } },
+        };
+    };
 
-    ParticleManager particle_manager(particles, big_g, true, window_width, window_height);
-    ParticleRenderer particle_renderer(particles, sf::Color::White);
+    auto particles = std::make_shared<std::vector<Particle>>(create_starting_particles());
+
+    ParticleManager particle_manager(particles, big_g, true, window_width, window_height, 0.5);
+    ParticleRenderer particle_renderer(sf::Color::White);
 
     std::random_device rd;
     std::mt19937 seeder(rd());
@@ -58,13 +72,21 @@ int main(int argc, char *argv[])
                 const int pos_y = event.mouseButton.y;
                 particle_manager.create_circular_particle(pos_x, pos_y, radius_dist(seeder), 10000);
             }
+            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R)
+            {
+                *particles = create_starting_particles();
+            }
+            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G)
+            {
+                has_gravity = !has_gravity;
+            }
         }
 
         window.clear(sf::Color::Black);
 
-        for (auto& shape : particle_renderer.create_particle_shapes()) { window.draw(shape); }
+        for (auto& shape : particle_renderer.create_particle_shapes(*particles)) { window.draw(shape); }
 
-        particle_manager.calculate_physics(delta_time);
+        particle_manager.calculate_physics(delta_time, has_gravity);
 
         window.display();
     }

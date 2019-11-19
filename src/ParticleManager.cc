@@ -42,11 +42,11 @@ void ParticleManager::wrap_particle(Particle& particle)
     if (!need_to_wrap) return;
 
     unit_normal.normalize();
-    particle.velocity = particle.velocity - 2 * (particle.velocity.dot(unit_normal)) * unit_normal;
+    particle.velocity = cor * (particle.velocity - 2 * (particle.velocity.dot(unit_normal)) * unit_normal);
 }
 
 
-void ParticleManager::calculate_physics(const sf::Time& delta_time)
+void ParticleManager::calculate_physics(const sf::Time& delta_time, bool has_gravity)
 {
     if (particles->size() <= 1) return;
 
@@ -54,25 +54,29 @@ void ParticleManager::calculate_physics(const sf::Time& delta_time)
 
     for (auto i = particles->begin(); i != particles->end(); ++i) 
     {
+        calculate_collisions(i);
+
         i->position += i->velocity * dt + 0.5 * i->acceleration * dt * dt;
 
-        const auto last_acceleration = i->acceleration;
-
-        eig::Vector2d new_acceleration { 0, 0 };
-
-        // Loop over all particles
-        for (auto j = particles->begin(); j != particles->end(); ++j) 
+        if (has_gravity)
         {
-            if (j == i) continue;
+            const auto last_acceleration = i->acceleration;
 
-            new_acceleration += (j->position - i->position).normalized() *
-                (j->mass * big_g) / (j->position - i->position).squaredNorm();
+            eig::Vector2d new_acceleration { 0, 0 };
+
+            // Loop over all particles
+            for (auto j = particles->begin(); j != particles->end(); ++j) 
+            {
+                if (j == i) continue;
+
+                new_acceleration += (j->position - i->position).normalized() *
+                    (j->mass * big_g) / (j->position - i->position).squaredNorm();
+            }
+
+            i->acceleration = new_acceleration;
+            i->velocity += dt * (new_acceleration + last_acceleration) * 0.5;
         }
 
-        i->acceleration = new_acceleration;
-        i->velocity += dt * (new_acceleration + last_acceleration) * 0.5;
-
-        calculate_collisions(i);
 
         if (wrapping) wrap_particle(*i);
     }
@@ -85,14 +89,25 @@ void ParticleManager::calculate_collisions(std::vector<Particle>::iterator i)
     for (auto j = std::next(i); j != particles->end(); ++j) 
     {
         const auto distance = (j->position - i->position).norm();
+        const auto alpha = distance - (i->radius + j->radius + epsilon);
 
-        if (distance > i->radius + j->radius + epsilon) continue;
+        if (alpha > 0) continue;
 
         const auto unit = (j->position - i->position) / distance;
         const auto moment = 2 * (i->velocity.dot(unit) - j->velocity.dot(unit)) / (i->mass + j->mass);
 
         i->velocity = i->velocity - moment * j->mass * unit;
         j->velocity = j->velocity + moment * i->mass * unit;
+
+        if (alpha < 0)
+        {
+            std::vector<Particle>::iterator small_particle, large_particle;
+
+            if (j->mass < i->mass) { small_particle = j; large_particle = i; }
+            else { small_particle = i; large_particle = j; }
+
+            small_particle->position -= (small_particle->position - large_particle->position) / distance * (alpha);
+        }
     }
 }
 
